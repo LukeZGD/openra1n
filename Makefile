@@ -7,14 +7,13 @@ ifeq ($(LIBUSB),1)
 	CFLAGS += -DHAVE_LIBUSB
 	LIBS += -lusb-1.0
 	OBJCOPY = llvm-objcopy
-	EMBEDDED_LD != command -v cctools-ld
+	EMBEDDED_LD := $(shell command -v cctools-ld)
 else
 	CC = xcrun -sdk macosx gcc
 	CFLAGS += -arch x86_64 -arch arm64
 	LIBS += -framework IOKit -framework CoreFoundation
-	OBJCOPY = $(BREW)/opt/binutils/bin/gobjcopy
-	BREW != brew --prefix
-	EMBEDDED_LD != command -v ld
+	OBJCOPY = /opt/local/bin/gobjcopy
+	EMBEDDED_LD := $(shell command -v ld)
 endif
 
 
@@ -41,7 +40,7 @@ payloads: vmacho
 		xxd -i $$file | sed 's/unsigned int/size_t/' >> include/$$file.h; \
 	done
 
-openra1n: payloads
+openra1n:
 	@echo " CC     $(BIN)"
 	@$(CC) $(CFLAGS) $(SOURCE) $(LDFLAGS) $(LIBS) -o $(BIN)
 	strip $(BIN)
