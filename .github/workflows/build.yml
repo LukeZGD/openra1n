@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Install depends
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential libusb-1.0-0-dev
+
       - name: Run make
         run: make openra1n LIBUSB=1
 
